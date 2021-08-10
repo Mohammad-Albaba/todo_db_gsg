@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_db_gsg/helpers/db_helper.dart';
 import 'package:todo_db_gsg/models/task_model.dart';
+import 'package:todo_db_gsg/providers/todo_provider.dart';
 
 class NewTaskPage extends StatefulWidget {
-  Function insertFunction;
-  NewTaskPage(this.insertFunction);
   @override
   _NewTaskPageState createState() => _NewTaskPageState();
 }
@@ -15,8 +15,9 @@ class _NewTaskPageState extends State<NewTaskPage> {
   String taskName;
 
   saveTask(){
-    widget.insertFunction(TaskModel(taskName: taskName, isComplete: isComplete));
-  Navigator.pop(context);
+    Provider.of<TodoProvider>(context,listen: false)
+        .insertTask(TaskModel(taskName: taskName, isComplete: isComplete));
+        Navigator.pop(context);
   }
 
   @override

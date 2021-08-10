@@ -1,42 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_db_gsg/helpers/db_helper.dart';
 import 'package:todo_db_gsg/models/task_model.dart';
+import 'package:todo_db_gsg/providers/todo_provider.dart';
 import 'package:todo_db_gsg/ui/pages/all_tasks.dart';
 import 'package:todo_db_gsg/ui/pages/complete_tasks.dart';
 import 'package:todo_db_gsg/ui/pages/incomplete_tasks.dart';
 import 'package:todo_db_gsg/ui/pages/new_task_page.dart';
 
-class MainPage extends StatefulWidget {
-  @override
-  _MainPageState createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  List<TaskModel> tasks;
-  insertNewTask(TaskModel taskModel) async{
-    await DbHelper.dbHelper.createNewTask(taskModel);
-    getAllTask();
-  }
-  getAllTask() async{
-    List<TaskModel> tasks = await DbHelper.dbHelper.getAllTasks();
-    this.tasks = tasks;
-    setState(() {});
-  }
-  deleteTask(TaskModel taskModel) async{
-    await DbHelper.dbHelper.deleteTask(taskModel);
-    getAllTask();
-  }
-  updateTask(TaskModel taskModel) async{
-    await DbHelper.dbHelper.updateTask(taskModel);
-    getAllTask();
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Future.delayed(Duration(seconds: 1)).then((value) => getAllTask());
-
-  }
+class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -48,7 +20,7 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 onPressed: (){
                   Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                    return NewTaskPage(insertNewTask);
+                    return NewTaskPage();
                   }));
                 }),
           ],
@@ -62,15 +34,15 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
         ),
-        body: this.tasks == null
+        body: Provider.of<TodoProvider>(context).allTasks == null
             ? Center(
           child: CircularProgressIndicator(),
         )
             : TabBarView(
           children: [
-            AllTasks(tasks, updateTask, deleteTask),
-            CompleteTasks(tasks, updateTask, deleteTask),
-            InCompleteTasks(tasks, updateTask, deleteTask),
+            AllTasks(),
+            CompleteTasks(),
+            InCompleteTasks(),
           ],
         ),
       ),

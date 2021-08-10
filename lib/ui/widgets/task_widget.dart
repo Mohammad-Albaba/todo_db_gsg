@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_db_gsg/models/task_model.dart';
+import 'package:todo_db_gsg/providers/todo_provider.dart';
 
 class TaskWidget extends StatelessWidget {
   TaskModel taskModel;
-  Function updateFun;
-  Function deleteFun;
-  TaskWidget(this.taskModel,this.updateFun,this.deleteFun);
+  TaskWidget(this.taskModel,);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,13 +19,13 @@ class TaskWidget extends StatelessWidget {
         children: [
           Checkbox(value: taskModel.isComplete, onChanged: (v){
             taskModel.isComplete = v ;
-            updateFun(taskModel);
+            Provider.of<TodoProvider>(context,listen: false).updateTask(taskModel);
           }),
           SizedBox(width: 10,),
           Expanded(child: Text(taskModel.taskName)),
           // Spacer(),
           IconButton(icon: Icon(Icons.delete), onPressed: (){
-            deleteFun(taskModel);
+            Provider.of<TodoProvider>(context,listen: false).deleteTask(taskModel);
           }),
         ],
       ),
